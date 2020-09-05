@@ -166,3 +166,14 @@ AsyncArray.prototype.find = async function (predicate, thisArg) {
   const index = await this.findIndex(predicate, thisArg);
   return this[index];
 };
+
+AsyncArray.prototype.includes = async function (value, fromIndex = 0) {
+  let found = false;
+  for (let i = fromIndex; i < this.length; i++) {
+    if (this[i] === value) {
+      found = true;
+      break;
+    }
+  }
+  return found;
+};
