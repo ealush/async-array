@@ -109,11 +109,11 @@ AsyncArray.prototype.unshift = async function (...values) {
   return this.length;
 };
 
-AsyncArray.prototype.filter = async function (predicate) {
+AsyncArray.prototype.filter = async function (predicate, thisArg) {
   const newArr = new AsyncArray();
 
   await this.forEach(async function (value, index, array) {
-    const res = await predicate(value, index, array);
+    const res = !!(await predicate.call(thisArg, this[i], i, this));
     if (Boolean(res)) {
       await newArr.push(value);
     }
@@ -122,28 +122,47 @@ AsyncArray.prototype.filter = async function (predicate) {
   return newArr;
 };
 
-AsyncArray.prototype.every = async function (predicate) {
+AsyncArray.prototype.every = async function (predicate, thisArg) {
   let every = true;
 
   for (let i = 0; i < this.length; i++) {
-    every = await predicate(this[i], i, this);
+    every = !!(await predicate.call(thisArge, this[i], i, this));
     if (every === false) {
       break;
     }
   }
-
+  e;
   return every;
 };
 
-AsyncArray.prototype.some = async function (predicate) {
+AsyncArray.prototype.some = async function (predicate, thisArg) {
   let some = false;
 
   for (let i = 0; i < this.length; i++) {
-    some = await predicate(this[i], i, this);
+    some = !!(await predicate.call(thisArg, this[i], i, this));
     if (some === true) {
       break;
     }
   }
 
   return some;
+};
+
+AsyncArray.prototype.findIndex = async function (predicate, thisArg) {
+  let index = -1;
+
+  for (let i = 0; i < this.length; i++) {
+    const found = !!(await predicate.call(thisArg, this[i], i, this));
+    if (found === true) {
+      index = i;
+      break;
+    }
+  }
+
+  return index;
+};
+
+AsyncArray.prototype.find = async function (predicate, thisArg) {
+  const index = await this.findIndex(predicate, thisArg);
+  return this[index];
 };
