@@ -22,6 +22,20 @@ const setLength = (instance, method, value) => {
   }
 };
 
+const iterate = (instance, callback) => {
+  let broke = false;
+
+  const breakOut = () => (broke = true);
+
+  for (let i = 0; i < instance.length; i++) {
+    callback(i, breakOut);
+
+    if (broke) {
+      break;
+    }
+  }
+};
+
 const retrieve = (instance, nth) => {
   switch (nth) {
     case FIRST:
@@ -176,4 +190,14 @@ AsyncArray.prototype.includes = async function (value, fromIndex = 0) {
     }
   }
   return found;
+};
+
+AsyncArray.prototype.join = async function (seperator = ",") {
+  let str = "";
+
+  iterate(this, (i, breakout) => {
+    str += `${i === 0 ? "" : seperator}${this[i]}`;
+  });
+
+  return str;
 };
