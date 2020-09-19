@@ -36,6 +36,28 @@ const iterate = async (instance, callback) => {
   }
 };
 
+const iteright = async (instance, callback, fromIndex = -1) => {
+  let broke = false;
+
+  const breakOut = () => (broke = true);
+
+  const length = instance.length;
+  const iStart =
+    fromIndex < 0
+      ? length + fromIndex
+      : fromIndex > length - 1
+      ? length - 1
+      : fromIndex;
+
+  for (let i = iStart; i >= 0; i--) {
+    callback(i, breakOut);
+
+    if (broke) {
+      break;
+    }
+  }
+};
+
 const retrieve = (instance, nth) => {
   switch (nth) {
     case FIRST:
@@ -187,6 +209,21 @@ AsyncArray.prototype.findIndex = async function (predicate, thisArg) {
 
 AsyncArray.prototype.indexOf = async function (value) {
   return this.findIndex((v) => v === value);
+};
+
+AsyncArray.prototype.lastIndexOf = async function (value, fromIndex) {
+  let lastIndex = -1;
+  iteright(
+    this,
+    (i, breakout) => {
+      if (this[i] === value) {
+        lastIndex = i;
+        breakout();
+      }
+    },
+    fromIndex
+  );
+  return lastIndex;
 };
 
 AsyncArray.prototype.find = async function (predicate, thisArg) {
