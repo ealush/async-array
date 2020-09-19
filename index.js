@@ -22,13 +22,13 @@ const setLength = (instance, method, value) => {
   }
 };
 
-const iterate = (instance, callback) => {
+const iterate = async (instance, callback) => {
   let broke = false;
 
   const breakOut = () => (broke = true);
 
   for (let i = 0; i < instance.length; i++) {
-    callback(i, breakOut);
+    await callback(i, breakOut);
 
     if (broke) {
       break;
@@ -73,9 +73,18 @@ function AsyncArray(...args) {
 }
 
 AsyncArray.prototype.forEach = async function (callback, thisArg) {
-  for (let i = 0; i < this.length; i++) {
+  await iterate(this, async (i) => {
     await callback.call(thisArg || this, this[i], i, this);
-  }
+  });
+};
+
+AsyncArray.prototype.map = async function (callback, thisArg) {
+  const next = new AsyncArray();
+  await iterate(this, async (i) => {
+    const v = await callback.call(thisArg || this, this[i], i, this);
+    next.push(v);
+  });
+  return next;
 };
 
 AsyncArray.prototype.push = async function (...pushValues) {
