@@ -185,6 +185,10 @@ AsyncArray.prototype.findIndex = async function (predicate, thisArg) {
   return index;
 };
 
+AsyncArray.prototype.indexOf = async function (value) {
+  return this.findIndex((v) => v === value);
+};
+
 AsyncArray.prototype.find = async function (predicate, thisArg) {
   const index = await this.findIndex(predicate, thisArg);
   return this[index];
