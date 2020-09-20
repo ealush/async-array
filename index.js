@@ -213,7 +213,7 @@ AsyncArray.prototype.indexOf = async function (value) {
 
 AsyncArray.prototype.lastIndexOf = async function (value, fromIndex) {
   let lastIndex = -1;
-  iteright(
+  await iteright(
     this,
     (i, breakout) => {
       if (this[i] === value) {
@@ -245,7 +245,7 @@ AsyncArray.prototype.includes = async function (value, fromIndex = 0) {
 AsyncArray.prototype.join = async function (seperator = ",") {
   let str = "";
 
-  iterate(this, (i, breakout) => {
+  await iterate(this, (i, breakout) => {
     str += `${i === 0 ? "" : seperator}${this[i]}`;
   });
 
@@ -266,4 +266,8 @@ AsyncArray.prototype.reverse = async function () {
   });
 
   return this;
+};
+
+AsyncArray.prototype.toString = async function () {
+  return await this.join();
 };
