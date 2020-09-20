@@ -251,3 +251,19 @@ AsyncArray.prototype.join = async function (seperator = ",") {
 
   return str;
 };
+
+AsyncArray.prototype.reverse = async function () {
+  await iterate(this, (i, breakout) => {
+    const l = this.length - 1;
+    if (i > l / 2) {
+      breakout();
+      return;
+    }
+    const pairIndex = l - i;
+    const leftVal = this[i];
+    this[i] = this[pairIndex];
+    this[pairIndex] = leftVal;
+  });
+
+  return this;
+};
