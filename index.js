@@ -4,6 +4,24 @@ const SET = "SET";
 const FIRST = "FIRST";
 const LAST = "LAST";
 
+const genAsyncIterator = (instance, genValue) => {
+  let i = 0;
+  return {
+    [Symbol.asyncIterator]() {
+      return {
+        next: async () => {
+          const done = i > instance.length - 1;
+
+          return {
+            done,
+            value: await genValue(i++),
+          };
+        },
+      };
+    },
+  };
+};
+
 const setLength = (instance, method, value) => {
   switch (method) {
     case SET:
@@ -270,4 +288,8 @@ AsyncArray.prototype.reverse = async function () {
 
 AsyncArray.prototype.toString = async function () {
   return await this.join();
+};
+
+AsyncArray.prototype.keys = async function () {
+  return genAsyncIterator(this, (i) => i);
 };
