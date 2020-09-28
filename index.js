@@ -101,6 +101,7 @@ const eachRight = (array, callback, thisArg) => {
 
 function AsyncArray(...args) {
   const { length, 0: first } = args;
+  this[Symbol.for(`__${this.constructor.name}`)] = "_";
   this.length = 0;
   if (typeof first === "number" && length === 1) {
     this.length = length;
@@ -126,6 +127,10 @@ AsyncArray.from = async function (arrayLike, mapper) {
   }
 
   throw TypeError(`${arrayLike} is not an iterable`);
+};
+
+AsyncArray.isAsyncArray = async function (value) {
+  return Boolean(value && (value instanceof AsyncArray || value[ID]));
 };
 
 AsyncArray.prototype.concat = async function (...concatValues) {
