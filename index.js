@@ -112,6 +112,24 @@ function AsyncArray(...args) {
   }
 }
 
+AsyncArray.from = function (arrayLike, mapper) {
+  if (Object.prototype.hasOwnProperty.call(arrayLike, "length")) {
+    const newArray = new AsyncArray();
+    for (let i = 0; i < arrayLike.length; i++) {
+      newArray.push(
+        typeof mapper === "function" ? mapper(arrayLike[i], i) : arrayLike[i]
+      );
+    }
+    return newArray;
+  }
+
+  throw TypeError(`${arrayLike} is not an iterable`);
+};
+
+AsyncArray.prototype.concat = async function (...concatValues) {
+  const next = new AsyncArray();
+};
+
 AsyncArray.prototype.forEach = async function (callback, thisArg) {
   await iterate(this, async (i) => {
     await callback.call(thisArg || this, this[i], i, this);
