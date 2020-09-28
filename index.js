@@ -127,6 +127,15 @@ AsyncArray.prototype.map = async function (callback, thisArg) {
   return next;
 };
 
+AsyncArray.prototype.reduce = async function (callback, initialValue) {
+  let accumulator = initialValue;
+  await iterate(this, async (i) => {
+    accumulator = await callback(accumulator, this[i], i, this);
+  });
+
+  return accumulator;
+};
+
 AsyncArray.prototype.push = async function (...pushValues) {
   eachArgs(this, pushValues, function (value) {
     this[this.length] = value;
