@@ -293,3 +293,7 @@ AsyncArray.prototype.toString = async function () {
 AsyncArray.prototype.keys = async function () {
   return genAsyncIterator(this, (i) => i);
 };
+
+AsyncArray.prototype.values = async function () {
+  return genAsyncIterator(this, (i) => this[i]);
+};
