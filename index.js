@@ -112,12 +112,14 @@ function AsyncArray(...args) {
   }
 }
 
-AsyncArray.from = function (arrayLike, mapper) {
-  if (Object.prototype.hasOwnProperty.call(arrayLike, "length")) {
+AsyncArray.from = async function (arrayLike, mapper) {
+  if (arrayLike && Object.prototype.hasOwnProperty.call(arrayLike, "length")) {
     const newArray = new AsyncArray();
     for (let i = 0; i < arrayLike.length; i++) {
       newArray.push(
-        typeof mapper === "function" ? mapper(arrayLike[i], i) : arrayLike[i]
+        typeof mapper === "function"
+          ? await mapper(arrayLike[i], i)
+          : arrayLike[i]
       );
     }
     return newArray;
