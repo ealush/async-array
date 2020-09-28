@@ -1,5 +1,5 @@
-const INCREASE = "INCREASE";
-const DECREASE = "DECREASE";
+const INCREMENT = "INCREMENT";
+const DECREMENT = "DECREMENT";
 const SET = "SET";
 const FIRST = "FIRST";
 const LAST = "LAST";
@@ -31,10 +31,10 @@ const setLength = (instance, method, value) => {
         instance.length = value;
       }
       break;
-    case INCREASE:
+    case INCREMENT:
       instance.length += 1;
       break;
-    case DECREASE:
+    case DECREMENT:
       instance.length -= 1;
       break;
   }
@@ -157,7 +157,7 @@ AsyncArray.prototype.reduce = async function (callback, initialValue) {
 AsyncArray.prototype.push = async function (...pushValues) {
   eachArgs(this, pushValues, function (value) {
     this[this.length] = value;
-    setLength(this, INCREASE);
+    setLength(this, INCREMENT);
   });
 
   return this.length;
@@ -166,7 +166,7 @@ AsyncArray.prototype.push = async function (...pushValues) {
 AsyncArray.prototype.pop = async function () {
   const last = retrieve(this, LAST);
   delete this[this.length - 1];
-  setLength(this, DECREASE);
+  setLength(this, DECREMENT);
   return last;
 };
 
@@ -191,7 +191,7 @@ AsyncArray.prototype.unshift = async function (...values) {
 
       if (i < upBy) {
         this[i] = values[i];
-        setLength(this, INCREASE);
+        setLength(this, INCREMENT);
       }
     },
     this
