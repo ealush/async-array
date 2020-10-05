@@ -101,7 +101,6 @@ const eachRight = (array, callback, thisArg) => {
 
 function AsyncArray(...args) {
   const { length, 0: first } = args;
-  this[Symbol.for(`__${this.constructor.name}`)] = "_";
   this.length = 0;
   if (typeof first === "number" && length === 1) {
     this.length = length;
@@ -130,11 +129,7 @@ AsyncArray.from = async function (arrayLike, mapper) {
 };
 
 AsyncArray.isAsyncArray = async function (value) {
-  return Boolean(value && (value instanceof AsyncArray || value[ID]));
-};
-
-AsyncArray.prototype.concat = async function (...concatValues) {
-  const next = new AsyncArray();
+  return await Boolean(value && value instanceof AsyncArray);
 };
 
 AsyncArray.prototype.forEach = async function (callback, thisArg) {
@@ -330,4 +325,22 @@ AsyncArray.prototype.keys = async function () {
 
 AsyncArray.prototype.values = async function () {
   return genAsyncIterator(this, (i) => this[i]);
+};
+
+AsyncArray.prototype.concat = async function (...concatValues) {
+  const next = await AsyncArray.from(this);
+
+  await iterate(concatValues, async (index) => {
+    const cValue = concatValues[index];
+
+    if (Array.isArray(cValue) || (await AsyncArray.isAsyncArray(cValue))) {
+      await iterate(cValue, async (idx) => {
+        await next.push(cValue[idx]);
+      });
+    } else {
+      await next.push(cValue);
+    }
+  });
+
+  return next;
 };
