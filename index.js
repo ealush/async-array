@@ -68,7 +68,7 @@ const iteright = async (instance, callback, fromIndex = -1) => {
       : fromIndex;
 
   for (let i = iStart; i >= 0; i--) {
-    callback(i, breakOut);
+    await callback(i, breakOut);
 
     if (broke) {
       break;
@@ -156,6 +156,15 @@ AsyncArray.prototype.reduce = async function (callback, initialValue) {
   return accumulator;
 };
 
+AsyncArray.prototype.reduceRight = async function (callback, initialValue) {
+  let accumulator = initialValue;
+  await iteright(this, async (i) => {
+    accumulator = await callback(accumulator, this[i], i, this);
+  });
+
+  return accumulator;
+};
+
 AsyncArray.prototype.push = async function (...pushValues) {
   eachArgs(this, pushValues, function (value) {
     this[this.length] = value;
@@ -180,7 +189,7 @@ AsyncArray.prototype.shift = async function () {
     }
     this[index - 1] = value;
   }, this);
-  this.pop();
+  await this.pop();
   return first;
 };
 
